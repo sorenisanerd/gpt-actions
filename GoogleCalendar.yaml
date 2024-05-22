@@ -140,6 +140,94 @@ paths:
                               type: string
                         summary:
                           type: string
+    post:
+      summary: Add an event to a calendar
+      operationId: addCalendarEvent
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary:
+                  type: string
+                location:
+                  type: string
+                description:
+                  type: string
+                start:
+                  type: object
+                  properties:
+                    dateTime:
+                      type: string
+                      format: date-time
+                    timeZone:
+                      type: string
+                end:
+                  type: object
+                  properties:
+                    dateTime:
+                      type: string
+                      format: date-time
+                    timeZone:
+                      type: string
+                attendees:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+              required:
+                - summary
+                - start
+                - end
+      responses:
+        "200":
+          description: Event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  summary:
+                    type: string
+                  location:
+                    type: string
+                  description:
+                    type: string
+                  start:
+                    type: object
+                    properties:
+                      dateTime:
+                        type: string
+                        format: date-time
+                      timeZone:
+                        type: string
+                  end:
+                    type: object
+                    properties:
+                      dateTime:
+                        type: string
+                        format: date-time
+                      timeZone:
+                        type: string
+                  attendees:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        email:
+                          type: string
 components:
   schemas: {}
   securitySchemes:
