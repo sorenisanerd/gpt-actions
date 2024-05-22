@@ -1,0 +1,155 @@
+openapi: 3.0.1
+info:
+  title: GPT Google Calendar Integration
+  version: 1.0.0
+servers:
+  - url: https://www.googleapis.com/calendar/v3
+paths:
+  /users/me/calendarList:
+    get:
+      summary: List user's calendars
+      operationId: listUserCalendars
+      responses:
+        "200":
+          description: A list of user's calendars
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        summary:
+                          type: string
+  /calendars/{calendarId}/events:
+    get:
+      summary: List events from a calendar
+      operationId: listCalendarEvents
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - "startTime"
+          description: Always set this to "startTime"
+        - name: singleEvents
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - "true"
+          description: This should always be set to "true"
+        - name: maxResults
+          in: query
+          schema:
+            type: integer
+          description: Maximum number of events returned on one result page. The number of events in the resulting page may be less than this value, or none at all, even if there are more events matching the query. Incomplete pages can be detected by a non-empty nextPageToken field in the response. By default the value is 250 events. The page size can never be larger than 2500 events. Optional.
+        - name: timeMin
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Lower bound (exclusive) for an event's end time to filter by. Optional. The default is not to filter by end
+            time. Must be an RFC3339 timestamp with mandatory time zone offset, for example, 2011-06-03T10:00:00-07:00,
+            2011-06-03T10:00:00Z. Milliseconds may be provided but are ignored. If timeMax is set, timeMin must be
+            smaller than timeMax.
+        - name: timeMax
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Upper bound (exclusive) for an event's start time to filter by. Optional. The default is not to filter by
+            start time. Must be an RFC3339 timestamp with mandatory time zone offset, for example,
+            2011-06-03T10:00:00-07:00, 2011-06-03T10:00:00Z. Milliseconds may be provided but are ignored. If timeMin is
+            set, timeMax must be greater than timeMin.
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: >
+            Free text search terms to find events that match these terms in the following fields:
+
+            * summary
+            * description
+            * location
+            * attendee's displayName
+            * attendee's email
+            * organizer's displayName
+            * organizer's email
+            * workingLocationProperties.officeLocation.buildingId
+            * workingLocationProperties.officeLocation.deskId
+            * workingLocationProperties.officeLocation.label
+
+            These search terms also match predefined keywords against all display title translations of working location, out-of-office, and focus-time events.
+        - name: syncToken
+          in: query
+          schema:
+            type: string
+          description: |
+            Token obtained from the nextSyncToken field returned on the last page of results from the previous list request. It makes the result of this list request contain only entries that have changed since then. All events deleted since the previous list request will always be in the result set and it is not allowed to set
+            showDeleted to False.  
+
+            These query parameters cannot be specified together with nextSyncToken:
+              * iCalUID
+              * orderBy
+              * privateExtendedProperty
+              * q
+              * sharedExtendedProperty
+              * timeMin
+              * timeMax
+              * updatedMin
+
+            All other query parameters should be the same as for the initial request.
+      responses:
+        "200":
+          description: A list of calendar events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        start:
+                          type: object
+                          properties:
+                            dateTime:
+                              type: string
+                        end:
+                          type: object
+                          properties:
+                            dateTime:
+                              type: string
+                        summary:
+                          type: string
+components:
+  schemas: {}
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://oauth2.googleapis.com/token
+          scopes:
+            https://www.googleapis.com/auth/calendar: Manage your calendars
+security:
+  - OAuth2: []
